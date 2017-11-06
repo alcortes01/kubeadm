@@ -1,6 +1,10 @@
 ---
 driver:
   name: vagrant
+  vagrnatfiles:
+    - Vagrantfile.rb
+  customize:
+    memory: 1024
 
 provisioner:
   name: chef_zero
@@ -13,13 +17,39 @@ verifier:
   name: inspec
 
 platforms:
-  - name: ubuntu-16.04
-  - name: centos-7
+#  - name: ubuntu-16.04
+  - name: centos/7
 
 suites:
-  - name: default
+  - name: master
     run_list:
-      - recipe[kubeadm::default]
+      - recipe[kubeadm::master]
+    driver:
+      vm_hostname: master.vagrant.test
+      network:
+        - ["private_network", {ip: "172.28.128.200"}]
+    verifier:
+      inspec_tests:
+        - test/smoke/default
+    attributes:
+  - name: node01
+    run_list:
+      - recipe[kubeadm::node]
+    driver:
+      vm_hostname: node01.vagrant.test
+      network:
+        - ["private_network", {ip: "172.28.128.201"}]
+    verifier:
+      inspec_tests:
+        - test/smoke/default
+    attributes:
+  - name: node02
+    run_list:
+      - recipe[kubeadm::node]
+    driver:
+      vm_hostname: node02.vagrant.test
+      network:
+        - ["private_network", {ip: "172.28.128.202"}]
     verifier:
       inspec_tests:
         - test/smoke/default
