@@ -4,7 +4,7 @@ driver:
   vagrnatfiles:
     - Vagrantfile.rb
   customize:
-    memory: 2048
+    memory: 1024
 
 provisioner:
   name: chef_zero
