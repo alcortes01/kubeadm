@@ -4,7 +4,7 @@ maintainer_email 'alcortes01@gmail.com'
 license 'Apache-2.0'
 description 'Installs Kubernetes using kubeadm'
 long_description 'Installs Kubernetes using kubeadm'
-version '1.0.0'
+version '1.1.0'
 chef_version '>= 12.1' if respond_to?(:chef_version)
 issues_url 'https://github.com/alcortes01/kubeadm/issues'
 source_url 'https://github.com/alcortes01/kubeadm'

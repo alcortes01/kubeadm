@@ -12,4 +12,5 @@ execute 'kubeadm init' do
     #{node['kubeadm']['api_ip_address']}:6443
     EOF
   action :run
+  not_if "grep 'https://#{node['kubeadm']['api_ip_address']}' /etc/kubernetes/kubelet.conf"
 end

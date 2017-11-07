@@ -16,7 +16,7 @@ execute 'kubeadm init' do
     --apiserver-advertise-address=#{node['kubeadm']['api_ip_address']}
     EOF
   action :run
-  not_if 'kubectl get pods -n kube-system | grep flannel | grep Running'
+  not_if "curl -k https://#{node['kubeadm']['api_ip_address']}:6443/healthz | grep ^ok"
   # not_if '! kubeadm init'
 end
 

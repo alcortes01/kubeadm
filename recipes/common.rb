@@ -22,6 +22,20 @@ service 'docker' do
   action [:enable, :start]
 end
 
+# Enable docker memory accounting
+execute 'docker memory accounting' do
+  command 'systemctl set-property docker.service MemoryAccounting=yes'
+  action :run
+  not_if 'systemctl show docker.service | grep MemoryAccounting=yes'
+end
+
+# Enable docker CPU accounting
+execute 'docker memory accounting' do
+  command 'systemctl set-property docker.service CPUAccounting=yes'
+  action :run
+  not_if 'systemctl show docker.service | grep CPUAccounting=yes'
+end
+
 # kubernetes repo
 yum_repository 'kubernetes' do
   description 'Kubernetes repo'
