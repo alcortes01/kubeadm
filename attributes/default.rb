@@ -4,3 +4,4 @@ default['kubeadm']['service_cidr'] = '10.96.0.0/12'
 default['kubeadm']['dns_domain'] = 'cluster.local'
 default['kubeadm']['api_ip_address'] = '172.28.128.200'
 default['kubeadm']['single_node_cluster'] = false
+default['kubeadm']['flannel_iface'] = 'eth1'

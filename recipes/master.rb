@@ -30,9 +30,17 @@ execute 'kube config' do
   not_if 'test -f /root/.kube/config'
 end
 
+# https://raw.githubusercontent.com/coreos/flannel/v0.9.0/Documentation/kube-flannel.yml
+template '/tmp/kube-flannel.yml' do
+  source 'kube-flannel.yml.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+end
+
 # flannel pod network
 execute 'kubectl flannel' do
-  command 'kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.0/Documentation/kube-flannel.yml'
+  command 'kubectl apply -f /tmp/kube-flannel.yml'
   action :run
   not_if 'kubectl get pods -n kube-system | grep flannel | grep Running'
 end
@@ -44,4 +52,11 @@ if node['kubeadm']['single_node_cluster'] == true
     action :run
     not_if 'kubectl describe nodes | grep "Taints" | grep "<none>"'
   end
+end
+
+# Dashboard add-on
+execute 'dashboard addon' do
+  command 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml'
+  action :run
+  not_if 'kubectl get pods -n kube-system | grep -i dashboard'
 end
