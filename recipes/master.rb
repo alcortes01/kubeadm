@@ -33,7 +33,6 @@ template '/etc/systemd/system/kubelet.service.d/10-kubeadm.conf' do
 end
 
 # modify kubelet config file to include network interface
-# TODO change eth1 to variable
 execute 'modify kubelet config' do
   command "sed -i -e 's/--node-ip= /--node-ip=#{node_ip} /g' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
   action :run
