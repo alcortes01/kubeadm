@@ -108,7 +108,7 @@ spec:
       containers:
       - name: kube-flannel
         image: quay.io/coreos/flannel:v0.9.0-amd64
-        command: [ "/opt/bin/flanneld", "--ip-masq", "--kube-subnet-mgr", "--iface=<%= node['kubeadm']['flannel-iface'] %>" ]
+        command: [ "/opt/bin/flanneld", "--ip-masq", "--kube-subnet-mgr", "--iface=<%= node['kubeadm']['flannel_iface'] %>" ]
         securityContext:
           privileged: true
         env:

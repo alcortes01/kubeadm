@@ -20,6 +20,41 @@ execute 'kubeadm init' do
   # not_if '! kubeadm init'
 end
 
+# This is the node IP address
+node_ip = node['network']['interfaces'][node['kubeadm']['flannel_iface']]['addresses'].keys[1]
+
+# template new kubelet config file
+template '/etc/systemd/system/kubelet.service.d/10-kubeadm.conf' do
+  source '10-kubeadm.conf.erb'
+  owner 'root'
+  group 'root'
+  mode '0755'
+  not_if { ::File.readlines('/etc/systemd/system/kubelet.service.d/10-kubeadm.conf').grep(/node-ip=#{node_ip} /).any? }
+end
+
+# modify kubelet config file to include network interface
+# TODO change eth1 to variable
+execute 'modify kubelet config' do
+  command "sed -i -e 's/--node-ip= /--node-ip=#{node_ip} /g' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
+  action :run
+  not_if { ::File.readlines('/etc/systemd/system/kubelet.service.d/10-kubeadm.conf').grep(/node-ip=#{node_ip} /).any? }
+  notifies :run, 'execute[systemd daemon reload]', :immediately
+end
+
+# systemd daemon reload after kubelet config file changed
+execute 'systemd daemon reload' do
+  command 'systemctl daemon-reload'
+  action :nothing
+  notifies :restart, 'service[restart kubelet]', :immediately
+end
+
+# restart kubelet
+service 'restart kubelet' do
+  service_name 'kubelet'
+  supports status: true
+  action [:nothing]
+end
+
 # Kube config for root
 execute 'kube config' do
   command <<-EOF
@@ -43,9 +78,10 @@ execute 'kubectl flannel' do
   command 'kubectl apply -f /tmp/kube-flannel.yml'
   action :run
   not_if 'kubectl get pods -n kube-system | grep flannel | grep Running'
+  notifies :restart, 'service[docker restart]', :immediately
 end
 
-# single node cluster
+# single node cluster is true
 if node['kubeadm']['single_node_cluster'] == true
   execute 'single node cluster' do
     command 'kubectl taint nodes --all node-role.kubernetes.io/master-'
@@ -54,9 +90,18 @@ if node['kubeadm']['single_node_cluster'] == true
   end
 end
 
+# restart docker
+service 'docker restart' do
+  service_name 'docker'
+  supports status: true
+  action [:nothing]
+end
+
 # Dashboard add-on
 execute 'dashboard addon' do
   command 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml'
   action :run
+  retries 2
+  retry_delay 10
   not_if 'kubectl get pods -n kube-system | grep -i dashboard'
 end
