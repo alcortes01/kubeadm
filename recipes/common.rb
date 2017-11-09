@@ -5,12 +5,10 @@ execute 'disable swap' do
   not_if 'swapon -s | wc -l | grep 0'
 end
 
-# disable firewall
-if node['kubeadm']['disable_firewall'] == true
-  service 'firewalld' do
-    supports status: true
-    action [:disable, :stop]
-  end
+# disable firewalld
+service 'firewalld' do
+  supports status: true
+  action [:disable, :stop]
 end
 
 # disable selinux
