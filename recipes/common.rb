@@ -6,6 +6,12 @@ execute 'disable swap' do
 end
 
 # disable firewall
+if node['kubeadm']['disable_firewall'] == true
+  service 'firewalld' do
+    supports status: true
+    action [:disable, :stop]
+  end
+end
 
 # disable selinux
 execute 'selinux' do
@@ -54,6 +60,11 @@ package 'kubectl'
 # package kubeadm
 package 'kubeadm'
 
+# modify kubelet configuration
+execute 'kubelet config' do
+  command 'echo --iface'
+  action :run
+end
 # service kubelet
 service 'start kubelet' do
   service_name 'kubelet'
