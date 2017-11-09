@@ -49,20 +49,9 @@ yum_repository 'kubernetes' do
   action :create
 end
 
-# package kubelet
-package 'kubelet'
-
-# package kubectl
-package 'kubectl'
-
-# package kubeadm
+# package kubeadm and dependencies
 package 'kubeadm'
 
-# modify kubelet configuration
-execute 'kubelet config' do
-  command 'echo --iface'
-  action :run
-end
 # service kubelet
 service 'start kubelet' do
   service_name 'kubelet'
