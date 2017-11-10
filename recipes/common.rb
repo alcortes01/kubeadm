@@ -50,7 +50,9 @@ yum_repository 'kubernetes' do
 end
 
 # package kubeadm and dependencies
-package 'kubeadm'
+package 'kubeadm' do
+  version node['kubeadm']['version']
+end
 
 # service kubelet
 service 'start kubelet' do
