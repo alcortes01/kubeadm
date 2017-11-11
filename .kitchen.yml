@@ -24,6 +24,7 @@ suites:
   - name: master
     run_list:
       - recipe[kubeadm::master]
+      - recipe[kubeadm::dashboard]
     driver:
       vm_hostname: master.vagrant.test
       network:

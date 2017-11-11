@@ -95,12 +95,3 @@ service 'docker restart' do
   supports status: true
   action [:nothing]
 end
-
-# Dashboard add-on
-execute 'dashboard addon' do
-  command 'kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml'
-  action :run
-  retries 2
-  retry_delay 10
-  not_if 'kubectl get pods -n kube-system | grep -i dashboard'
-end
