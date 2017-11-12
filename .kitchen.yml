@@ -1,10 +1,8 @@
 ---
 driver:
   name: vagrant
-  vagrnatfiles:
+  vagrantfiles:
     - Vagrantfile.rb
-  customize:
-    memory: 1024
 
 provisioner:
   name: chef_zero
@@ -25,10 +23,13 @@ suites:
     run_list:
       - recipe[kubeadm::master]
       - recipe[kubeadm::dashboard]
+      - recipe[kubeadm::heapster]
     driver:
       vm_hostname: master.vagrant.test
       network:
         - ["private_network", {ip: "172.28.128.200"}]
+      customize:
+        memory: 2048
     verifier:
       inspec_tests:
         - test/smoke/default
@@ -40,6 +41,8 @@ suites:
       vm_hostname: node01.vagrant.test
       network:
         - ["private_network", {ip: "172.28.128.201"}]
+      customize:
+        memory: 1024
     verifier:
       inspec_tests:
         - test/smoke/default
@@ -51,6 +54,8 @@ suites:
       vm_hostname: node02.vagrant.test
       network:
         - ["private_network", {ip: "172.28.128.202"}]
+      customize:
+        memory: 1024
     verifier:
       inspec_tests:
         - test/smoke/default

@@ -28,32 +28,36 @@ The following platforms are supported and tested with Test Kitchen:
 * default['kubeadm']['single_node_cluster'] = false
 * default['kubeadm']['flannel_iface'] = 'eth1'
 * default['kubeadm']['version'] = '1.8.3-0'
+* default['kubeadm']['heapster_version'] = '1.4.3'
 
 ## Kubernetes Components
-### Master components:
+### Master
 - kubelet
-- kube-controller-manager
-- kube-scheduler
-- kube-apiserver
-- etcd
-- kube-dns
-- kube-proxy
-- kube-flannel
+- kube-controller-manager (container)
+- kube-scheduler (container)
+- kube-apiserver (container)
+- etcd (container)
+- kube-dns (container)
+- kube-proxy (container)
+- kube-flannel (container)
 - docker
 
-Use the runlist: recipe[kubeadm::master]
+Use the runlist: recipe[kubeadm::master], recipe[kubeadm::dashboard], recipe[kubeadm::heapster]
 
-
-### Node components:
-- kube-flannel
-- kube-proxy
+### Nodes
+- kube-flannel (container)
+- kube-proxy (container)
 - docker
 
 Use the runlist: recipe[kubeadm::node]
+
+### Add-ons
+- dashboard, use recipe[kubeadm::dashboard]
+- heapster/influxdb/grafana, use recipe[kubeadm::heapster]
 
 ## Test using Chef Kitchen with Vagrant and Virtualbox
 The file .kitchen.yml is provided with the next servers:
 * One master node
 * Two worker nodes
 
-Is recommended that you install Vagrant Landrush plugin to avoid having to do a manual configuration of the file /etc/hosts in each server. Check https://github.com/vagrant-landrush/landrush
+Is recommended that you install Vagrant Landrush plugin to create a local DNS server, and avoid having to do a manual configuration of the file /etc/hosts in each server. Check https://github.com/vagrant-landrush/landrush

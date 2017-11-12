@@ -16,8 +16,8 @@ execute 'kubeadm init' do
     --apiserver-advertise-address=#{node['kubeadm']['api_ip_address']}
     EOF
   action :run
-  not_if "curl -k --max-time 10 https://#{node['kubeadm']['api_ip_address']}:6443/healthz | grep ^ok"
-  # not_if '! kubeadm init'
+  not_if "grep 'https://#{node['kubeadm']['api_ip_address']}' /etc/kubernetes/kubelet.conf"
+  # not_if "curl -k --max-time 10 https://#{node['kubeadm']['api_ip_address']}:6443/healthz | grep ^ok"
 end
 
 # This is the node IP address

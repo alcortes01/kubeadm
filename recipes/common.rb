@@ -18,6 +18,11 @@ execute 'selinux' do
   not_if 'getenforce | grep Permissive'
 end
 
+# install wget
+package 'wget' do
+  action :install
+end
+
 # install docker
 package 'docker'
 

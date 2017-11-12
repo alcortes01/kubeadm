@@ -4,11 +4,23 @@
 #
 # Copyright:: 2017, The Authors, All Rights Reserved.
 
-# Dashboard add-on
-execute 'dashboard addon' do
-  command "kubectl apply -f https://github.com/kubernetes/dashboard/raw/#{node['kubeadm']['dashboard_version']}/src/deploy/recommended/kubernetes-dashboard.yaml"
+# Download dashboard
+install_path = "/etc/kubernetes/manifests/dashboard-#{node['kubeadm']['dashboard_commit_hash7']}"
+download_url = "https://github.com/kubernetes/dashboard/raw/#{node['kubeadm']['dashboard_commit_hash7']}"
+
+bash 'download dashboard' do
+  code <<-EOF
+    mkdir -p #{install_path}
+    cd #{install_path}
+    wget #{download_url}/src/deploy/recommended/kubernetes-dashboard.yaml
+  EOF
+  not_if { ::File.exist?("#{install_path}/kubernetes-dashboard.yaml") }
+end
+
+# install dashboard addon
+execute 'install dashboard' do
+  cwd install_path
+  command 'kubectl create -f .'
   action :run
-  retries 2
-  retry_delay 10
-  not_if 'kubectl get pods -n kube-system | grep -i dashboard'
+  not_if 'kubectl get pods -n kube-system | grep kubernetes-dashboard'
 end
