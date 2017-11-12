@@ -24,3 +24,19 @@ execute 'install dashboard' do
   action :run
   not_if 'kubectl get pods -n kube-system | grep kubernetes-dashboard'
 end
+
+# create template for dashboard admin role
+template "#{install_path}/dashboard-admin.yaml" do
+  source 'dashboard-admin.yaml.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+  notifies :run, 'execute[create dashboard admin role]', :immediately
+end
+
+# create dashboard admin role
+execute 'create dashboard admin role' do
+  cwd install_path
+  command 'kubectl create -f ./dashboard-admin.yaml'
+  action :nothing
+end

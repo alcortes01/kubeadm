@@ -28,7 +28,8 @@ The following platforms are supported and tested with Test Kitchen:
 * default['kubeadm']['single_node_cluster'] = false
 * default['kubeadm']['flannel_iface'] = 'eth1'
 * default['kubeadm']['version'] = '1.8.3-0'
-* default['kubeadm']['heapster_version'] = '1.4.3'
+* default['kubeadm']['dashboard_commit_hash7'] = '28527b0'
+* default['kubeadm']['heapster_commit_hash7'] = '9f415d0'
 
 ## Kubernetes Components
 ### Master
@@ -60,4 +61,20 @@ The file .kitchen.yml is provided with the next servers:
 * One master node
 * Two worker nodes
 
-Is recommended that you install Vagrant Landrush plugin to create a local DNS server, and avoid having to do a manual configuration of the file /etc/hosts in each server. Check https://github.com/vagrant-landrush/landrush
+## Access the dashboard
+- Find the secret name for kubernetes-dashboard
+```
+$ kubectl -n kube-system get secret | grep kubernetes-dashboard-token
+```
+- Get the token needed to login to dashboard. 7bwww is a string found using the previous command.
+```
+$ kubectl -n kube-system describe secret kubernetes-dashboard-token-7bwww
+```
+- Use kubectl command to create a proxy
+```
+$ kubectl proxy
+```
+- Access dashboard using a local browser
+http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+
+While using Vagrant, is recommended that you install Landrush plugin to create a local DNS server, and avoid having to do a manual configuration of the file /etc/hosts in each server. Check https://github.com/vagrant-landrush/landrush
