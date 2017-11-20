@@ -82,9 +82,10 @@ end
 
 # single node cluster is true
 if node['kubeadm']['single_node_cluster'] == true
-  execute 'single node cluster' do
-    command 'sleep 5 && kubectl taint nodes --all node-role.kubernetes.io/master-'
+  execute 'allow pods in master' do
+    command 'kubectl taint nodes --all node-role.kubernetes.io/master-'
     action :run
+    retries 10
     not_if 'kubectl describe nodes | grep "Taints" | grep "<none>"'
   end
 end
