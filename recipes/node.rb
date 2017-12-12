@@ -5,6 +5,10 @@
 # Copyright:: 2017, The Authors, All Rights Reserved.
 include_recipe 'kubeadm::common'
 
+# Search the master server to assign the API IP address
+master = search(:node, 'run_list:*kubeadm??master*')
+node.normal['kubeadm']['api_ip_address'] = master[0]['ipaddress']
+
 execute 'kubeadm join' do
   command <<-EOF
     kubeadm join \

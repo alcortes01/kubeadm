@@ -17,7 +17,7 @@ bash 'download heapster/influxdb/grafana' do
     wget #{download_url}/deploy/kube-config/influxdb/influxdb.yaml
     wget #{download_url}/deploy/kube-config/rbac/heapster-rbac.yaml
   EOF
-  not_if { ::File.exist?("#{install_path}/heapster.yaml") }
+  not_if { ::File.exist?("#{install_path}/grafana.yaml") }
 end
 
 execute 'modify grafana.yaml' do

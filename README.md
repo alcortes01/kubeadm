@@ -24,7 +24,6 @@ The following platforms are supported and tested with Test Kitchen:
 * default['kubeadm']['pod_cidr'] = '10.244.0.0/16'
 * default['kubeadm']['service_cidr'] = '10.96.0.0/12'
 * default['kubeadm']['dns_domain'] = 'cluster.local'
-* default['kubeadm']['api_ip_address'] = '172.28.128.200'
 * default['kubeadm']['single_node_cluster'] = false
 * default['kubeadm']['flannel_iface'] = 'eth1'
 * default['kubeadm']['version'] = '1.8.3-0'
@@ -78,3 +77,13 @@ $ kubectl proxy
 http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
 
 While using Vagrant, is recommended that you install Landrush plugin to create a local DNS server, and avoid having to do a manual configuration of the file /etc/hosts in each server. Check https://github.com/vagrant-landrush/landrush
+
+## Chef Kitchen Integration Tests
+
+### Multi-node testing
+Be sure to have the next gem installed: kitchen-nodes. You can do the manual installation using:
+```
+$ chef exec gem install kitchen-nodes
+```
+### For Vagrant tests using Kitchen
+- Add a private network with static IP. See .kitchen.yml file for an example.
