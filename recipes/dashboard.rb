@@ -22,8 +22,8 @@ execute 'install dashboard' do
   cwd install_path
   command 'kubectl create -f .'
   action :run
-  retries 10
-  retry_delay 2
+  retries 20
+  retry_delay 10
   not_if 'kubectl get pods -n kube-system | grep kubernetes-dashboard'
 end
 

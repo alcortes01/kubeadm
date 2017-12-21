@@ -98,5 +98,13 @@ end
 service 'docker restart' do
   service_name 'docker'
   supports status: true
-  action [:nothing]
+  action :nothing
+  # notifies :run, 'execute[delay]', :immediately
 end
+
+# # delay recipe after docker restart
+# Chef::Log.info('Delaying recipe execution')
+# execute 'delay' do
+#   command 'sleep 15'
+#   action :nothing
+# end
